@@ -94,4 +94,11 @@ There are a variety of SuperScript projects, some being dependent upon others.
   This library contains functionality for making HTML template-specific declarations.
   
 
+##Alternatives
+
+[`SuperScript.Templates.JavaScriptTemplates`](https://github.com/Supertext/SuperScript.Templates.JavaScriptTemplates) pre-compiles HTML templates into [JavaScript Templates](https://github.com/blueimp/JavaScript-Templates) HTML templates.
+
+<br>
+<hr>
+
 `SuperScript.Templates.jQueryTmpl` has been made available under the [MIT License](https://github.com/Supertext/SuperScript.Templates.jQueryTmpl/blob/master/LICENSE).
