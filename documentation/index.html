@@ -1,0 +1,119 @@
+<h2>What Does It Do?</h2>
+
+<p>
+	This library is an add-on for <a href="https://github.com/Supertext/SuperScript.Common/" target="_blank">SuperScript</a>. It is strongly recommended
+	to read the <a href="http://supertext.github.io/SuperScript.Common/" target="_blank">documentation</a> for the core project before proceeding with this 
+	library. If you haven't yet read the core documentation then it is recommended that you start by reading about the 
+	<a href="http://supertext.github.io/SuperScript.Common/#!/core-concepts" target="_blank">core concepts</a>.
+</p>
+
+<p>
+	SuperScript.Templates.jQueryTmpl adds functionality for declaring HTML templates, written for the <a href="https://github.com/blueimp/JavaScript-Templates" target="_blank">JavaScript Templates</a> library in server-side .NET code.
+</p>
+
+<p>
+	While the <a href="https://github.com/Supertext/SuperScript.Common" target="_blank">SuperScript</a> library contains the core functionality for
+	making and emitting declarations, SuperScript.Templates.jQueryTmpl contains a specific implementation of one of those core classes. Broadly speaking,
+	SuperScript has three main aspects: <a href="http://supertext.github.io/SuperScript.Common/#!/declarations.declarations" target="_blank">declarations</a>, 
+	which are instances of <abbr title="SuperScript.Declarables.DeclarationBase"><code>DeclarationBase</code></abbr>, and 
+	<a href="http://supertext.github.io/SuperScript.Common/#!/emitters.emitters" target="_blank">emitters</a>, which consist of a combination of 
+	<a href="http://supertext.github.io/SuperScript.Common/#!/modifiers.modifiers" target="_blank">modifiers</a>.
+</p>
+
+<p>
+	SuperScript.Templates.jQueryTmpl therefore consists an implementation of a specific modifier, an 
+	<abbr title="SuperScript.Modifiers.Converters.CollectionConverter"><code>CollectionConverter</code></abbr>. In fact, this
+	implementation, <abbr title="SuperScript.Templates.jQueryTmpl.Modifiers.Converters.jQueryTmplStringify"><code>jQueryTmplStringify</code></abbr>, 
+	is part of a hierarchical chain:
+</p>
+
+<ul class="list-unstyled class-hierarchy">
+	<li><abbr title="SuperScript.Templates.jQueryTmpl.Modifiers.Converters.jQueryTmplStringify"><code>jQueryTmplStringify</code></abbr></li>
+	<li>&#8595;</li>
+	<li><a href="http://supertext.github.io/SuperScript.Templates/#!/modifiers.converters.template-stringify" target="_blank"><abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify"><code>SuperScript.Templates.Modifiers.Converters.TemplateStringify</code></abbr></a></li>
+	<li>&#8595;</li>
+	<li><a href="http://supertext.github.io/SuperScript.Common/#!/modifiers.collection-converter" target="_blank"><abbr title="SuperScript.Modifiers.Converters.CollectionConverter"><code>SuperScript.Modifiers.Converters.CollectionConverter</code></abbr></a></li>
+	<li>&#8595;</li>
+	<li><a href="https://github.com/Supertext/SuperScript.Common/blob/master/Modifiers/BaseClass/Modifier.cs" target="_blank"><abbr title="SuperScript.Modifiers.ModifierBase"><code>SuperScript.Modifiers.ModifierBase</code></abbr></a></li>
+</ul>
+
+<p>
+	The reason that the implementations of <abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify"><code>TemplateStringify</code></abbr>
+	differ is because of the <abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify.PreCompile"><code>PreCompile</code></abbr> option. 
+	Naturally, the compilation action for each type of HTML client library differs (otherwise they would all be the same library).
+</p>
+
+<p>
+	Therefore, the only real difference between implementations of <abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify"><code>TemplateStringify</code></abbr>
+	lies in the implementations of <abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify.CollateTemplates"><code>CollateTemplates</code></abbr> method.
+</p>
+
+<p>
+	Consequently, this implementation offers the ability to pre-compile <a href="https://github.com/blueimp/JavaScript-Templates" target="_blank">JavaScript Templates</a> HTML templates 
+	whereas other implementations of <abbr title="SuperScript.Templates.Modifiers.Converters.TemplateStringify"><code>TemplateStringify</code></abbr> will
+	offer compilation into different client-side template library formats.
+</p>
+
+<h3>Example</h3>
+
+<p>
+	Here is an example of declaratively configuring an <abbr title="SuperScript.Emitters.IEmitter"><code>IEmitter</code></abbr> in a config file. This
+	emitter implements this <abbr title="SuperScript.Templates.jQueryTmpl.Modifiers.Converters.jQueryTmplStringify"><code>jQueryTmplStringify</code></abbr> class
+	and uses <abbr title="SuperScript.Templates.Modifiers.Writers.TemplateStringifyJavaScript"><code>TemplateStringifyJavaScript</code></abbr> to write out the contents.
+</p>
+
+<p>
+	This example also shows how to enable pre-compilation.
+</p>
+
+<pre class="brush: xml">
+	&lt;configuration&gt;
+		&lt;configSections&gt;
+			&lt;section name="superScript" type="SuperScript.Configuration.SuperScriptConfig, SuperScript.Common" /&gt;
+		&lt;/configSections&gt;
+		&hellip;
+		&lt;superScript&gt;
+			&lt;emitter key="templates"&gt;
+				&lt;converters&gt;
+					&lt;modifier type="SuperScript.Templates.jQueryTmpl.Modifiers.Converters.jQueryTmplStringify, SuperScript.Templates.jQueryTmpl"&gt;
+						&lt;properties&gt;
+							&lt;property name="PreCompile" value="true" type="System.Boolean, mscorlib" /&gt;
+						&lt;/properties&gt;
+					&lt;/modifier&gt;
+				&lt;/converters&gt;
+				&lt;writers&gt;
+					&lt;modifier type="SuperScript.Templates.Modifiers.Writers.TemplateStringifyJavaScript, SuperScript.Templates" /&gt;
+				&lt;/writers&gt;
+			&lt;/emitter&gt;
+		&lt;/superScript&gt;
+	&lt;/configuration&gt;
+</pre>
+
+<p>
+	The same emitter can also be constructed programmatically.
+</p>
+
+<pre class="brush: c#">
+	using SuperScript.Configuration;
+	&hellip;
+	Settings.Instance.Emitters.Add(new StandardEmitter
+                                         {
+                                             Converter = new SuperScript.Templates.jQueryTmpl.Modifiers.Converters.jQueryTmplStringify
+                                                             {
+                                                                 PreCompile = true
+                                                             },
+                                             Key = "templates",
+                                             HtmlWriter = new SuperScript.Templates.Modifiers.Writers.TemplateStringifyJavaScript()
+                                         });
+</pre>
+
+<p>
+	More details on configuring an <abbr title="SuperScript.Emitters.IEmitter"><code>IEmitter</code></abbr> can be
+	read <a href="http://supertext.github.io/SuperScript.Common/#!/emitters.create-emitter" target="_blank">here</a>.
+</p>
+
+<p>
+	Also, more details on the <abbr title="SuperScript.Templates.Modifiers.Writers.TemplateStringifyJavaScript"><code>TemplateStringifyJavaScript</code></abbr>
+	implementation of <abbr title="SuperScript.Modifiers.Writers.HtmlWriter"><code>HtmlWriter</code></abbr> can be read
+	<a href="http://supertext.github.io/SuperScript.Templates/#!/modifiers.writers.template-stringify-javascript" target="_blank">here</a>.
+</p>
